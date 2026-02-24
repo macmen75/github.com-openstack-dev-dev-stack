@@ -5,17 +5,17 @@ on:
     branches:
       - main
     paths:
-      - 'fmg/**'
-      - 'fmg/.github/workflows/terraform-fmg-address.yml'
+      - 'github.com-openstack-dev-dev-stack/**'
+      - 'github.com-openstack-dev-dev-stack/.github/workflows/terraform-fmg-address.yml'
   pull_request:
     branches:
       - main
     paths:
-      - 'fmg/**'
+      - 'github.com-openstack-dev-dev-stack/**'
 
 env:
   TF_VERSION: 1.5.0
-  TERRAFORM_DIR: ./fmg
+  TERRAFORM_DIR: ./github.com-openstack-dev-dev-stack
 
 jobs:
   terraform:
