@@ -7,15 +7,13 @@ address_objects = {
     type    = "ipmask"
     color   = 3
     comment = "Office network address object"
-    tags    = ["office", "internal"]
   }
 
   "Remote-Office" = {
-    subnet  = "10.10.0.0/8"
+    subnet  = "10.0.0.0/8"
     type    = "ipmask"
     color   = 5
     comment = "Remote office network"
-    tags    = ["remote", "vpn"]
   }
 
   "DMZ-Network" = {
@@ -23,7 +21,6 @@ address_objects = {
     type    = "ipmask"
     color   = 7
     comment = "DMZ network segment"
-    tags    = ["dmz", "public"]
   }
 }
 
