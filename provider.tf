@@ -2,7 +2,7 @@ terraform {
   required_version = ">= 1.5.0"
   required_providers {
     fortimanager = {
-      source  = "Fortinet/fortimanager"
+      source  = "fortinetdev/fortimanager"
       version = "~> 2.28"
     }
   }
