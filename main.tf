@@ -1,4 +1,4 @@
-rresource "fortimanager_object_firewall_address" "address" {
+resource "fortimanager_object_firewall_address" "address" {
   for_each = var.address_objects
 
   adom    = var.adom
