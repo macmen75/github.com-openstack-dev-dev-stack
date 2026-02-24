@@ -3,7 +3,7 @@ terraform {
   required_providers {
     fortimanager = {
       source  = "fortinetdev/fortimanager"
-      version = "~> 2.28"
+      version = "~> 2.20"
     }
   }
 }
