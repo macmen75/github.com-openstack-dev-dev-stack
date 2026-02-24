@@ -28,7 +28,6 @@ variable "address_objects" {
     type    = string
     color   = optional(number, 0)
     comment = optional(string, "")
-    tags    = optional(list(string), [])
   }))
   default = {}
 }
