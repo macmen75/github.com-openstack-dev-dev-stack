@@ -1,5 +1,5 @@
 fmg_host    = "52.221.184.79"  # Update with your FMG hostname/IP
-fmg_api_token = draycqs6kb4m5mqpwyfkygtgiojedaeg
+fmg_api_token = "draycqs6kb4m5mqpwyfkygtgiojedaeg"
 fmg_insecure = true                       # Set to false with valid certificates
 
 address_objects = {
