@@ -1,4 +1,4 @@
-resource "fortimanager_object_address" "address" {
+resource "fortimanager_object_firewall_address" "address" {
   for_each = var.address_objects
 
   adom    = var.adom
@@ -8,6 +8,4 @@ resource "fortimanager_object_address" "address" {
   color   = each.value.color
   comment = each.value.comment
   tags    = each.value.tags
-
-  depends_on = [fortimanager_object_address.address]
 }
