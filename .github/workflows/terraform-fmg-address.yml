@@ -3,13 +3,13 @@ name: Terraform FMG Address Object
 on:
   push:
     branches:
-      - fmg
+      - main
     paths:
       - 'fmg/**'
       - 'fmg/.github/workflows/terraform-fmg-address.yml'
   pull_request:
     branches:
-      - fmg
+      - main
     paths:
       - 'github.com-openstack-dev-dev-stack/**'
 
