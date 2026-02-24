@@ -4,21 +4,21 @@ fmg_insecure = true                       # Set to false with valid certificates
 
 address_objects = {
   "Office-Network" = {
-    subnet  = "192.168.1.0 255.255.255.0"
+    subnet  = ["192.168.1.0", "255.255.255.0"]
     type    = "ipmask"
     color   = 3
     comment = "Office network address object"
   }
 
   "Remote-Office" = {
-    subnet  = "10.10.1.0 255.255.255.0"
+    subnet  = ["10.10.1.0", "255.255.255.0"]
     type    = "ipmask"
     color   = 5
     comment = "Remote office network"
   }
 
   "DMZ-Network" = {
-    subnet  = "172.16.1.0 255.255.255.0"
+    subnet  = ["172.16.1.0", "255.255.255.0"]
     type    = "ipmask"
     color   = 7
     comment = "DMZ network segment"
