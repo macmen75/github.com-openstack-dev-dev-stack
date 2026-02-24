@@ -1,19 +1,13 @@
-terraform {
-  required_providers {
-    fortimanager = {
-      source  = "fortinetdev/fortimanager"
-      version = "1.9.0"
-    }
-  }
-}
+resource "fortimanager_object_address" "address" {
+  for_each = var.address_objects
 
-provider "fortimanager" {
-  hostname = var.fmg_host
-  token    = var.fmg_token
-  insecure = "true"
-  scopetype = "adom"
-  adom      = "root"
-}
+  adom    = var.adom
+  name    = each.key
+  subnet  = each.value.subnet
+  type    = each.value.type
+  color   = each.value.color
+  comment = each.value.comment
+  tags    = each.value.tags
 
-variable "fmg_host" { type = string }
-variable "fmg_token" { type = string }
+  depends_on = [fortimanager_object_address.address]
+}
