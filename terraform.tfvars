@@ -25,4 +25,4 @@ address_objects = {
   }
 }
 
-#adom = "root"  # Change if using different ADOM
+adom = "root"  # Change if using different ADOM
