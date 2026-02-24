@@ -1,49 +1,72 @@
-name: 'FortiManager Gitflow'
+name: Terraform FMG Address Object
 
 on:
   push:
-    branches: [ main, develop ]
+    branches:
+      - main
+    paths:
+      - 'terraform/fmg/**'
+      - '.github/workflows/terraform-fmg-address.yml'
   pull_request:
-    branches: [ main, develop ]
+    branches:
+      - main
+    paths:
+      - 'terraform/fmg/**'
 
-permissions:
-  contents: read
-  pull-requests: write
+env:
+  TF_VERSION: 1.5.0
+  TERRAFORM_DIR: ./terraform/fmg
 
 jobs:
   terraform:
-    name: 'Terraform'
     runs-on: ubuntu-latest
     
-    # Select environment based on branch
-    environment:
-      name: ${{ github.ref == 'refs/heads/main' && 'production' || 'development' }}
-
-    env:
-      # Secrets should be stored in GitHub Environment Secrets
-      FORTIMANAGER_TOKEN: ${{ secrets.FMG_TOKEN }}
-      FORTIMANAGER_HOST: ${{ secrets.FMG_HOST }}
-      # ADOM changes based on environment (e.g., 'root' for prod, 'lab' for dev)
-      FMG_ADOM: ${{ vars.FMG_ADOM }}
-
     steps:
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v4
-
+      
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+      
       - name: Terraform Init
         run: terraform init
-
-      # Always run Plan on Pull Requests (Validation)
-      - name: Terraform Plan
-        if: github.event_name == 'pull_request'
-        id: plan
-        run: terraform plan -var="adom=${{ env.FMG_ADOM }}" -no-color
+        working-directory: ${{ env.TERRAFORM_DIR }}
+      
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+        working-directory: ${{ env.TERRAFORM_DIR }}
         continue-on-error: true
-
-      # Run Apply ONLY on merges to Main or Develop (Actual Change)
+      
+      - name: Terraform Validate
+        run: terraform validate
+        working-directory: ${{ env.TERRAFORM_DIR }}
+      
+      - name: Terraform Plan
+        run: terraform plan -out=tfplan -input=false
+        working-directory: ${{ env.TERRAFORM_DIR }}
+        env:
+          FMG_API_TOKEN: ${{ secrets.FMG_API_TOKEN }}
+      
       - name: Terraform Apply
-        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
-        run: terraform apply -var="adom=${{ env.FMG_ADOM }}" -auto-approve
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform apply -auto-approve -input=false tfplan
+        working-directory: ${{ env.TERRAFORM_DIR }}
+        env:
+          FMG_API_TOKEN: ${{ secrets.FMG_API_TOKEN }}
+      
+      - name: Terraform Plan Output (PR)
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const plan = fs.readFileSync('${{ env.TERRAFORM_DIR }}/tfplan', 'utf8');
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '## Terraform Plan Output\n```\n' + plan + '\n```'
+            });
