@@ -1,0 +1,49 @@
+name: 'FortiManager Gitflow'
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  terraform:
+    name: 'Terraform'
+    runs-on: ubuntu-latest
+    
+    # Select environment based on branch
+    environment:
+      name: ${{ github.ref == 'refs/heads/main' && 'production' || 'development' }}
+
+    env:
+      # Secrets should be stored in GitHub Environment Secrets
+      FORTIMANAGER_TOKEN: ${{ secrets.FMG_TOKEN }}
+      FORTIMANAGER_HOST: ${{ secrets.FMG_HOST }}
+      # ADOM changes based on environment (e.g., 'root' for prod, 'lab' for dev)
+      FMG_ADOM: ${{ vars.FMG_ADOM }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform init
+
+      # Always run Plan on Pull Requests (Validation)
+      - name: Terraform Plan
+        if: github.event_name == 'pull_request'
+        id: plan
+        run: terraform plan -var="adom=${{ env.FMG_ADOM }}" -no-color
+        continue-on-error: true
+
+      # Run Apply ONLY on merges to Main or Develop (Actual Change)
+      - name: Terraform Apply
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+        run: terraform apply -var="adom=${{ env.FMG_ADOM }}" -auto-approve
