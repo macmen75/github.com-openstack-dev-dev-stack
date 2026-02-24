@@ -24,7 +24,7 @@ variable "adom" {
 variable "address_objects" {
   description = "Map of address objects to create"
   type = map(object({
-    subnet  = string
+    subnet  = list(string)
     type    = string
     color   = optional(number, 0)
     comment = optional(string, "")
