@@ -11,7 +11,7 @@ address_objects = {
   }
 
   "Remote-Office" = {
-    subnet  = ["10.10.1.0", "255.255.255.0"]
+    subnet  = ["10.10.10.0", "255.255.255.0"]
     type    = "ipmask"
     color   = 5
     comment = "Remote office network"
